@@ -30,4 +30,47 @@
       await navigator.clipboard.writeText(location.href); say("Enlace copiado");
     }catch(e){ if (e && e.name !== 'AbortError') say("Copia el enlace desde la barra del navegador"); }
   });
+
+  // Encabezado: sombra suave al desplazarse
+  const top = document.querySelector('.top');
+  let ticking = false;
+  const onScroll = ()=>{ top.classList.toggle('scrolled', window.scrollY > 8); ticking = false; };
+  window.addEventListener('scroll', ()=>{ if (!ticking){ ticking = true; requestAnimationFrame(onScroll); } }, { passive:true });
+  onScroll();
+
+  if (!('IntersectionObserver' in window)) return;
+
+  // Menú: resalta la sección visible
+  const links = [...document.querySelectorAll('.nav a')];
+  const spy = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if (!en.isIntersecting) return;
+      links.forEach(a=> a.toggleAttribute('aria-current', a.getAttribute('href') === '#' + en.target.id));
+    });
+  }, { rootMargin:'-45% 0px -50% 0px' });
+  links.forEach(a=>{ const s = document.querySelector(a.getAttribute('href')); if (s) spy.observe(s); });
+
+  // Aparición suave de tarjetas y listas (se omite con "reducir movimiento")
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const items = document.querySelectorAll('.cards li, .req-list li, .details li, .open-call, .join-card, .ig-card');
+  const reveal = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if (!en.isIntersecting) return;
+      const el = en.target;
+      el.classList.add('in');
+      const done = e=>{
+        if (e.target !== el) return;
+        el.classList.remove('reveal', 'in'); el.style.removeProperty('--d');
+        el.removeEventListener('transitionend', done);
+      };
+      el.addEventListener('transitionend', done);
+      reveal.unobserve(el);
+    });
+  }, { rootMargin:'0px 0px -8% 0px' });
+  items.forEach(el=>{
+    const i = [...el.parentElement.children].indexOf(el);
+    el.style.setProperty('--d', Math.min(i, 5) * 60 + 'ms');
+    el.classList.add('reveal');
+    reveal.observe(el);
+  });
 })();

@@ -180,3 +180,61 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .close-ig{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;min-height:46px;padding:.5rem 1.1rem;border-radius:999px;background:var(--navy);color:#fff;font-family:var(--f-display);font-weight:700;text-decoration:none}
 .close-ig svg{width:20px;height:20px}
 .close .fine{margin-top:2.25rem;font-size:.8rem;color:var(--muted)}
+
+/* ================================================================
+   Pulido visual y de accesibilidad
+   (misma identidad: mismos colores, fuentes, olas y textos)
+   ================================================================ */
+::selection{background:var(--celeste);color:var(--navy)}
+h2,.intro,.msg,.req-close{text-wrap:balance}
+p{text-wrap:pretty}
+
+/* Enlace "saltar al contenido" (solo visible con teclado) */
+.skip{position:absolute;left:1rem;top:-100px;z-index:30;padding:.7rem 1.1rem;border-radius:999px;background:var(--navy);color:#fff;font-family:var(--f-display);font-weight:700;text-decoration:none}
+.skip:focus{top:calc(env(safe-area-inset-top,0px) + .75rem)}
+
+/* Foco visible también sobre fondos oscuros */
+.deep :focus-visible,.open-call :focus-visible{outline-color:var(--oro)}
+
+/* Encabezado: línea y sombra suaves al desplazarse */
+.top{transition:box-shadow .25s ease}
+.top.scrolled{box-shadow:0 1px 0 var(--line),0 12px 24px -22px rgba(13,27,61,.45)}
+.top-cta{display:inline-flex;align-items:center;min-height:44px;transition:background-color .2s,box-shadow .2s}
+.top-cta:hover{box-shadow:0 6px 16px -8px rgba(255,195,73,.9)}
+.nav a{position:relative;padding-block:.35rem;transition:color .2s}
+.nav a:hover{color:var(--indigo)}
+.nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;background:var(--azul);transform:scaleX(0);transform-origin:left;transition:transform .25s ease}
+.nav a:hover::after,.nav a[aria-current]::after{transform:scaleX(1)}
+.nav a[aria-current]{color:var(--ink)}
+
+/* Interacción táctil */
+.btn,.top-cta,.close-ig,.handle{touch-action:manipulation}
+.btn-gold[aria-disabled="true"]{cursor:not-allowed}
+.handle{display:inline-flex;align-items:center;min-height:44px;transition:box-shadow .2s,color .2s}
+.handle:hover{box-shadow:0 0 0 2px var(--celeste)}
+.close-ig{transition:background-color .2s}
+.close-ig:hover{background:var(--indigo)}
+.btn-soft{transition:transform .15s ease,background-color .2s,color .2s,box-shadow .2s,border-color .2s}
+.btn-soft:hover{box-shadow:0 10px 22px -14px rgba(13,27,61,.45)}
+
+/* Tarjetas: relieve consistente */
+.cards li{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.find .cards li{box-shadow:0 1px 0 rgba(13,27,61,.03)}
+.req-list li{transition:transform .25s ease}
+.details li{transition:background-color .25s ease,border-color .25s ease}
+
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  .btn:not([aria-disabled="true"]):hover{transform:translateY(-2px)}
+  .btn:not([aria-disabled="true"]):active{transform:scale(.97)}
+  .cards li:hover{transform:translateY(-4px);box-shadow:0 22px 40px -26px rgba(13,27,61,.45);border-color:var(--celeste)}
+  .req-list li:hover{transform:translateX(4px)}
+}
+@media (hover:hover){
+  .details li:hover{background:rgba(151,221,233,.16);border-color:rgba(151,221,233,.4)}
+}
+
+/* Aparición suave al desplazarse (solo si no se pidió reducir movimiento) */
+@media (prefers-reduced-motion:no-preference){
+  body .reveal{opacity:0;transform:translateY(18px);transition:opacity .55s ease-out var(--d,0ms),transform .55s cubic-bezier(.2,.7,.2,1) var(--d,0ms)}
+  body .reveal.in{opacity:1;transform:none}
+}
